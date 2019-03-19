@@ -1,6 +1,9 @@
 # gddd
 主题（未完成）
 
+主题安装之后需要先在后台设置下，然后点保存
+支付未接入
+
 
 ```php
 [gd_video link="链接" credit="购买积分或留空" rmb="购买价格或留空" ][/gd_video]
@@ -13,3 +16,8 @@ access 1登录可见 2积分阅读 3付费阅读   4用户组
 key               所需积分 所需rmb    可以看得用户（用,隔开）
 
 ```
+/links 友情链接
+/collections 专题
+/blacklist 小黑屋
+/write     投稿（未完成）
+
