@@ -65,13 +65,12 @@ function gd_send_noti($msg_user,$msg_type,$msg_who,$msg_value,$msg_text){
 	$msg_who = esc_sql((int)$msg_who);
     $msg_value = esc_sql((int)$msg_value);
     $msg_text = esc_sql(esc_attr($msg_text));
-    $msg_read = esc_sql((int)$msg_read);
 
-	global $wpdb;  					 //               购买视频；申请链接
-	$data['msg_user'] = $msg_user;   //谁的通知               ；
-	$data['msg_type'] = $msg_type;   //通知类型   		  1   ；   2
-	$data['msg_who'] = $msg_who;     //谁发过来的     官方id  ； 申请人
-	$data['msg_value'] = $msg_value; //关键值        post_id  ；       
+	global $wpdb;  					 //               购买视频；申请链接  签到奖励  点赞奖励   收藏奖励  关注奖励   被关注奖励
+	$data['msg_user'] = $msg_user;   //谁的通知               ；                              
+	$data['msg_type'] = $msg_type;   //通知类型   		  1   ；   2        3          4           5         6          7
+	$data['msg_who'] = $msg_who;     //谁发过来的     官方id  ； 申请人      
+	$data['msg_value'] = $msg_value; //关键值        post_id  ；            num
 	$data['msg_text'] = $msg_text;   //通知信息               ；
 	$data['msg_read'] = '0'; 		 //读了没           
 

@@ -596,19 +596,92 @@ function gd_signin(){
       exit; 
     }
 
-	$credit = gd_get_user_meta_message($user_id,'credit');
 
   	$option = explode(',',of_get_option('gdqiandao','none'));
 	$signcredit = rand($option[0], $option[1]);
-	$credit = $credit + $signcredit;
 
-	update_user_meta($user_id,'credit',$credit);
-	updatelv($user_id);
-	gd_send_noti($user_id,3,of_get_option('guanfangid','none'),$signcredit,'签到成功：奖励'.$signcredit.'积分');
+  	addcredit($user_id,'qiandao',$signcredit);
 
 	print json_encode(array('status'=>200,'msg'=>$signcredit));
 	exit; 	
 }
 
+/*文章内购*/
+add_action( 'wp_ajax_postcontentbuy', 'postcontentbuy' );
+function postcontentbuy(){
+    $post_id = isset($_GET['id']) ? intval(esc_sql($_GET['id'])) : '';
+  	$user_id = get_current_user_id();
+  	$rmb = gd_get_user_meta_message($user_id,'rmb');
+	$credit = gd_get_user_meta_message($user_id,'credit');
+	$content = get_post($post_id)->post_content;
 
+	$shortcode_tags = array(
+		'gd_content' => 'gd_content_fun'
+	);
+	if ( false === strpos( $content, '[' ) ) {
+		return;
+	}
+	if ( empty( $shortcode_tags ) || ! is_array( $shortcode_tags ) ) {
+		return;
+	}
+	preg_match_all( '@\[([^<>&/\[\]\x00-\x20=]++)@', $content, $matches );
+	$tagnames = array_intersect( array_keys( $shortcode_tags ), $matches[1] );
+	if ( empty( $tagnames ) ) {
+		return;
+	}
+	$ignore_html ='';
+	$content = do_shortcodes_in_html_tags( $content, $ignore_html, $tagnames );
+	$pattern = get_shortcode_regex( $tagnames );
+	preg_match( "/$pattern/", $content, $m);
+	if ( $m[1] == '[' && $m[6] == ']' ) {
+		return;
+	}
+
+	$attr = shortcode_parse_atts( $m[3] );
+	
+	$type = ($attr['access'] !== '' ) ? $attr['access'] : 0;
+  	$need = ($attr['key'] !== '' ) ? $attr['key'] : 0;
+	
+	if($type=='2'){
+		if($need !== 0 ){
+		  if($need - $credit > 0){
+			  print json_encode(array('status'=>500,'msg' =>__('积分不足','gd')));
+			  exit;
+		  }
+		}
+		$credit = $credit-$need;
+		update_user_meta($user_id,'credit',$credit);
+		$credit_need = $need;
+	}elseif($type=='3'){
+		if( $need !== 0 ){
+		  if($need - $rmb > 0){
+			  print json_encode(array('status'=>500,'msg' =>__('余额不足','gd')));
+			  exit;
+		  }
+		}	
+		
+		$rmb = $rmb-$need;
+		update_user_meta($user_id,'rmb',$rmb);
+		$rmb_need = $need;
+	}else{
+		print json_encode(array('status'=>500,'msg' =>__('未知错误','gd')));
+		exit;	
+	}
+	
+  	$order_id = gd_create_guid(null,true);
+	$order = new Gd_order_Message($order_id,$user_id,$post_id,'w','q',$rmb_need,$credit_need,0,0,1,'购买了付费内容'.get_permalink($post_id));
+	$resout = $order->add_data();
+
+  	//gd_send_noti($msg_user,$msg_type,$msg_who,$msg_value,$msg_text)
+  	gd_send_noti($user_id,1,of_get_option('guanfangid','none'),$post_id,'您购买了付费内容：<a href="'.get_permalink($post_id).'" target="_blank">'.get_the_title($post_id).'</a>');
+  	
+  	if($resout){
+        print json_encode(array('status'=>200,'msg' =>__('购买成功','gd')));
+        exit; 
+    }
+
+    print json_encode(array('status'=>500,'msg' =>__('未知错误，请联系管理员','gd')));
+    exit;
+
+}
 ?>

@@ -397,59 +397,142 @@ function gd_content_fun($atts, $content = null ){
   $key = isset($atts['key']) ? $atts['key'] :'0';
   $id = get_the_id();
   $msg = '';
-  $is_pay = false;
 
+  ob_start();
   switch ($access) {
     case '1':
       //登录可见
+      if(!is_user_logged_in()){
+      	?>
+        <div class="toast" style="margin-top: 7px;">
+            隐藏内容<br>
+            请<a href="<?php echo home_url('login');?>">登陆</a>后查看
+        </div>
+		<?php
+      }else{
+         ?>
+      	<div style="margin:10px;border: 1px dotted #c0c4cc;">
+          <p class="toast">隐藏内容</p>
+          <div style="padding:5px;">
+          <?php echo  $content;?>
+          </div>
+        </div>
+		<?php
+      }
       break;
     case '2':
       //积分阅读
+      if(!is_user_logged_in() || !iscontentpay($id)){
+      	?>
+        <div class="toast" style="margin-top: 7px;">
+            付费内容<br>
+          	请<span class="gd-color" onclick="postpay(<?php echo $id;?>)" style="cursor: pointer;">购买</span>查看<br>
+          	<?php echo $key; ?>积分
+        </div>
+		<?php
+      }else{
+         ?>
+      	<div style="margin:10px;border: 1px dotted #c0c4cc;">
+          <p class="toast">隐藏内容</p>
+          <div style="padding:5px;">
+          <?php echo  $content;?>
+          </div>
+        </div>
+		<?php
+      }
       break;
     case '3':
       //rmb阅读
+      if(!is_user_logged_in() || !iscontentpay($id)){
+      	?>
+        <div class="toast" style="margin-top: 7px;">
+            付费内容<br>
+          	请<span class="gd-color" onclick="postpay(<?php echo $id;?>)" style="cursor: pointer;">购买</span>查看<br>
+          	<?php echo $key; ?>RMB
+        </div>
+		<?php
+      }else{
+         ?>
+      	<div style="margin:10px;border: 1px dotted #c0c4cc;">
+          <p class="toast">隐藏内容</p>
+          <div style="padding:5px;">
+          <?php echo  $content;?>
+          </div>
+        </div>
+		<?php
+      }
       break;
     case '4':
       //用户组
+	  $canuser = explode(',',$key);
+      if(!is_user_logged_in()){
+		 
+      	?>
+        <div class="toast" style="margin-top: 7px;">
+            隐藏内容<br>
+            只允许 LV<?php echo $key; ?>查看
+        </div>
+		<?php
+      }else{
+		  $can = false;
+		  $user_id = gd_get_user_meta_message(get_current_user_id(),'lv');
+		  if(in_array($user_id,$canuser)){
+			  $can = true;
+		  }
+		  if(of_get_option('isvipshow','none')=='1'){
+			if(gd_is_vip($user_id)){
+			   $can = true;
+			}
+		  }
+		  if($can){  
+         ?>
+      	<div style="margin:10px;border: 1px dotted #c0c4cc;">
+          <p class="toast">隐藏内容</p>
+          <div style="padding:5px;">
+          <?php echo  $content;?>
+          </div>
+        </div>
+		<?php
+		  }else{
+            ?>
+            <div class="toast" style="margin-top: 7px;">
+                隐藏内容<br>
+                只允许 LV<?php echo $key; ?>查看
+            </div>
+          <?php
+          }
+      }
+	  
+	  
       break;
     default:
       break;
   }
-  
-  /*
+  $html = ob_get_clean();
+  return $html;
+}
+
+function iscontentpay($id){
+
     global $wpdb,$user_ID;
     if ($user_ID) {
-    $user_id = $user_ID;
+    	$user_id = $user_ID;
         global $table_prefix;
         $table_name = $table_prefix.'gd_order';
-        $is_pay = $wpdb->get_results("SELECT order_state FROM $table_name WHERE user_id=$user_id and post_id= $id and order_type = 'v'");
+        $is_pay = $wpdb->get_results("SELECT order_state FROM $table_name WHERE user_id=$user_id and post_id= $id and order_type = 'w'");
         $is_pay = empty($is_pay) ? false : true;
         if($is_pay){
-          $msg = '<div class="toast">您已购买</div>';
+          return true;
         }
       
         if(of_get_option('isvipshow','none')=='1'){
             if(gd_is_vip($user_id)){
-              $is_pay = true;
-                $msg = '<div class="toast">VIP特权免费查看</div>';
+				return true;
             }
         }
     }
-  
-      
-    if($key == '0' && !$is_pay){
-      $is_pay = true;
-    }
-*/
-  
-  ob_start();
-?>
+  	return false;
 
-
-
-<?php 
-  $html = ob_get_clean();
-  return $html;
 }
 
 ?>

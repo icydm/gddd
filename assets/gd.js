@@ -563,7 +563,22 @@ var sidebtn = new Vue({
       }
 })
 
-
+function postpay(id){
+  	if(gd_array["login_state"]!=="1"){
+    	swal("请先登录", "","warning");
+      	return;
+    }
+	$link = gd_array['ajaxurl']+'postcontentbuy&id='+id;
+  	$.get($link, function(result){
+		$a =JSON.parse(result);
+      	if($a['status']==500){
+        	swal($a['msg'], "","warning");
+        }else if($a['status']==200){
+			swal($a['msg'], "","success");
+          	setTimeout(function(){location.reload();},1500);
+        }
+  	});
+}
 
 
 

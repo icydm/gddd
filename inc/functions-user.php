@@ -235,4 +235,43 @@ function updatelv($user_id){
 		update_user_meta($user_id, 'lv', $lvv, $prev_value='');
 	}
 }
+
+function addcredit($user_id,$type,$num){
+  global $wpdb;
+  $table = $wpdb->prefix . 'gd_notification';
+  $jiangli = $wpdb->get_results("SELECT * FROM $table where (msg_type=3 or msg_type=4 or msg_type=5 or msg_type=6 or msg_type=7) and to_days(msg_date) = to_days(now())",ARRAY_A);
+  
+  $has = 0;
+  foreach($jiangli as $all){
+    $has = $has + $all['msg_value'];
+  }
+  
+  if($has>(int)of_get_option('maxjifenliangji','none')){
+  	return;
+  }
+  
+  $credit = gd_get_user_meta_message($user_id,'credit');
+  update_user_meta($user_id,'credit',$credit+$num);
+  updatelv($user_id);
+  
+  if((int)$num>0){
+    
+    if($type=='qiandao'){
+      gd_send_noti($user_id,3,of_get_option('guanfangid','none'),$num,'签到成功：奖励'.$num.'积分');  
+    }
+    if($type=='postlike'){
+      gd_send_noti($user_id,4,of_get_option('guanfangid','none'),$num,'文章点赞成功：奖励'.$num.'积分');  
+    }
+    if($type=='postshoucang'){
+      gd_send_noti($user_id,5,of_get_option('guanfangid','none'),$num,'文章收藏成功：奖励'.$num.'积分');  
+    }
+    if($type=='guanzhujiangli'){
+      gd_send_noti($user_id,6,of_get_option('guanfangid','none'),$num,'关注成功：奖励'.$num.'积分');  
+    }
+    if($type=='beiguanzhujiangli'){
+      gd_send_noti($user_id,7,of_get_option('guanfangid','none'),$num,'您被关注：奖励'.$num.'积分');  
+    }
+  }
+   return;
+}
 ?>

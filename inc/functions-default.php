@@ -226,7 +226,6 @@ function checkheiwu($user_id){
         	unset ($blacklist[$key]);
         }
       }
-      var_DUMP($blacklist);
       update_option('blacklist',$blacklist);
       $heiwu = array(
           'state' => '0',
