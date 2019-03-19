@@ -28,3 +28,5 @@ key               所需积分 所需rmb    可以看得用户（用,隔开）
 /write     投稿（未完成）
 
 最后放波广告  [https://affme.cn/](https://affme.cn/)
+
+Q群：865965089
