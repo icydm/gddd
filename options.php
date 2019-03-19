@@ -416,12 +416,47 @@ function optionsframework_options() {
         'id' => 'creditscale',
         'std' => '10',
         'type' => 'text'
-    );  
+    );
+    $options[] = array(
+        'name' => __( '今日最多可以被奖励多少积分', 'theme-textdomain' ),
+        'desc' => __( '达到这个数量之后积分就不再奖励了', 'theme-textdomain' ),
+        'id' => 'maxjifenliangji',
+        'std' => '10',
+        'type' => 'text'
+    );
     $options[] = array(
         'name' => __( '签到奖励', 'theme-textdomain' ),
         'desc' => __( '最小值,最大值', 'theme-textdomain' ),
         'id' => 'gdqiandao',
         'std' => '0,10',
+        'type' => 'text'
+    );
+    $options[] = array(
+        'name' => __( '点赞奖励', 'theme-textdomain' ),
+        'desc' => __( '文章点赞的奖励', 'theme-textdomain' ),
+        'id' => 'postdianzan',
+        'std' => '0',
+        'type' => 'text'
+    );
+    $options[] = array(
+        'name' => __( '文章收藏奖励', 'theme-textdomain' ),
+        'desc' => __( '文章收藏的奖励', 'theme-textdomain' ),
+        'id' => 'postshoucang',
+        'std' => '0',
+        'type' => 'text'
+    );
+    $options[] = array(
+        'name' => __( '关注用户奖励', 'theme-textdomain' ),
+        'desc' => __( '关注用户的奖励', 'theme-textdomain' ),
+        'id' => 'guanzhujiangli',
+        'std' => '0',
+        'type' => 'text'
+    );
+    $options[] = array(
+        'name' => __( '被关注用户奖励', 'theme-textdomain' ),
+        'desc' => __( '被关注用户的奖励', 'theme-textdomain' ),
+        'id' => 'beiguanzhujiangli',
+        'std' => '0',
         'type' => 'text'
     );
   

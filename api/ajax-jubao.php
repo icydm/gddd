@@ -1,11 +1,7 @@
 <?php
 if(isset($_POST)){
   require( '../../../../wp-load.php' );
-    if(is_user_logged_in()){
-      
-        print json_encode( array('status'=>200,'msg'=>'举报成功') ); //测试站使用，正常使用需删除
-        die();//测试站使用，正常使用需删除
-      
+    if(is_user_logged_in()){      
       
         $id = intval($_POST['id'])-1;
       	$value = htmlspecialchars($_POST['value']);

@@ -4,7 +4,12 @@ if(isset($_POST['coid'])){
   	$typeid=htmlspecialchars($_POST['coid']);
   	if(is_user_logged_in()){
         $user_id = wp_get_current_user()->ID;
-      	
+		
+	if(checkheiwu($user_id)){
+          print json_encode( array('status'=>500,'msg'=>'您已被关入小黑屋') );
+          die();
+    }
+	
       	if(strpos($typeid,'like') !== false){
           	$key = 'like';
           	$Word = '顶';

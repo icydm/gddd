@@ -5,6 +5,12 @@ if(isset($_GET['id'])){
   	if(is_user_logged_in()){
 		$current_user = wp_get_current_user();
         $user_id = $current_user->ID;
+		
+	if(checkheiwu(get_current_user_id())){
+          print json_encode( array('status'=>500,'msg'=>'您已被关入小黑屋') );
+          die();
+    }
+	
       	if($id == $user_id){
             print json_encode( array('status'=>500,'msg'=>'无法关注这么优秀的自己') );
             die();        	
@@ -26,10 +32,14 @@ if(isset($_GET['id'])){
             $follow=array_diff($follow,$a);
           	$fans=array_diff($fans,$b);
           	$msg = '取消关注成功';
+          	addcredit($user_id,'guanzhujiangli',-(int)of_get_option('guanzhujiangli','none'));
+          	addcredit($id,'beiguanzhujiangli',-(int)of_get_option('beiguanzhujiangli','none'));
         }else{
           	$fans[]=$user_id;
         	$follow[]=$id;
           	$msg = '关注成功';
+          	addcredit($user_id,'guanzhujiangli',(int)of_get_option('guanzhujiangli','none'));
+          	addcredit($id,'beiguanzhujiangli',(int)of_get_option('beiguanzhujiangli','none'));
         }
 		update_user_meta($id,'fans',$fans, $prev_value='');
       	update_user_meta($user_id, 'follow', $follow, $prev_value='');

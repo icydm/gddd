@@ -5,6 +5,13 @@ if ($_FILES) {
     if(!is_user_logged_in()){
     	die();
     }
+	
+	if(checkheiwu(get_current_user_id())){
+          print json_encode( array('status'=>500,'msg'=>'您已被关入小黑屋') );
+          die();
+    }
+	
+	
   	$user_id = wp_get_current_user()->ID;
 	$file = $_FILES['file'];
   	$type = $file['type']; //文件类型

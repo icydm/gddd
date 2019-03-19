@@ -9,6 +9,11 @@ if(isset($_POST)){
                 print json_encode($response);
                 die();		
 	}
+	if(checkheiwu(get_current_user_id())){
+          print json_encode( array('status'=>500,'msg'=>'您已被关入小黑屋') );
+          die();
+    }
+	
 	$comment = wp_handle_comment_submission( wp_unslash( $_POST ) );
     if ( is_wp_error( $comment ) ) {
         $data = $comment->get_error_data();
